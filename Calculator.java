@@ -23,7 +23,7 @@ public class Calculator {
 		
 		Color c1 = new Color(38, 38, 38);
 		Color c2 = new Color(67, 67, 67);
-		Color c3 = new Color(189, 126, 62);
+		Color c3 = new Color(255, 70, 70);
 		
 		Font f1 = new Font(null, Font.BOLD, 20);
 		
