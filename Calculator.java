@@ -15,11 +15,10 @@ public class Calculator {
     static boolean isChain = false;
     static String operator;
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) {		
 		String[][] layout = {
-				{"C", 	"%", "⌫", "/"},
-				{"7", 	"8", "9", 	"*"},
+				{"C", 	"%", "⌫", "÷"},
+				{"7", 	"8", "9", 	"×"},
 				{"4", 	"5", "6", 	"-"},
 				{"1", 	"2", "3", 	"+"},
 				{"+/-", "0", ".", 	"="}
@@ -33,11 +32,13 @@ public class Calculator {
 		
 		Font f1 = new Font(null, Font.BOLD, 20);
 		
+		UIManager.put("Button.select", new Color(0.38f, 0.38f, 0.38f, .2f ));
+		
 		JFrame frame = new JFrame("Calculator");
 		frame.setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
-	    frame.setSize(290,390);
+	    frame.setSize(290,415);
 	    frame.getContentPane().setBackground(c1);
 	    
 	    JLabel history = new JLabel("History");
@@ -58,24 +59,6 @@ public class Calculator {
 	    	ay += 40;
 	    }
 	    
-	    JButton b = new JButton("Show History");
-	    b.setBounds(0, 0, 100, 20);
-	    b.addActionListener(new ActionListener() {			
-			public void actionPerformed(ActionEvent e) {
-				if(frame.getWidth() == 290) {
-					frame.setSize(490, 390);
-					for(int i = 0; i < 5; i++)
-						a[i].setVisible(true);
-				}
-				else {
-					frame.setSize(290, 390);
-					for(int i = 0; i < 5; i++)
-						a[i].setVisible(false);	
-				}
-			}
-		});
-	    frame.add(b);
-	    
 	    JTextField textField = new JTextField();
 	    textField.setBounds(20, 20, 200, 50);
 	    textField.setFont(new Font("Arial", Font.PLAIN, 24));
@@ -89,7 +72,30 @@ public class Calculator {
 	    selOperator.setForeground(Color.WHITE);
 	    frame.add(selOperator);
 	    
-	    int y = 140;
+	    JButton b = new JButton("Show History");
+	    b.setBounds(90, 90, 135, 20);
+	    b.setFont(new Font(null, Font.BOLD, 15));
+		b.setBackground(c1);
+		b.setForeground(Color.white);
+		b.setBorder(null);
+		b.setFocusPainted(false);
+	    b.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				if(frame.getWidth() == 290) {
+					frame.setSize(490, 415);
+					for(int i = 0; i < 5; i++)
+						a[i].setVisible(true);
+				}
+				else {
+					frame.setSize(290, 415);
+					for(int i = 0; i < 5; i++)
+						a[i].setVisible(false);	
+				}
+			}
+		});
+	    frame.add(b);
+	    
+	    int y = 165;
 	    for(int i = 1; i < 4; i++) {
 	    	int x = 20;
 	    	for(int j = 0; j < 3; j++) {
@@ -99,6 +105,7 @@ public class Calculator {
 	    		btn.setForeground(Color.white);
 	    		btn.setFont(f1);
 	    		btn.setBorder(null);
+	    		btn.setFocusPainted(false);
 	    		btn.addActionListener(Calculator.action(textField));
 	    	    frame.add(btn);
 	    	    x += 50;
@@ -106,7 +113,7 @@ public class Calculator {
 	    	y += 50;
 	    }
 	    
-	    y = 90;
+	    y = 115;
 	    for(int i = 0; i < 4; i++) {
 	    	JButton btn = new JButton(layout[i][3]);
 	    	btn.setBounds(170, y, 50, 50);
@@ -114,6 +121,7 @@ public class Calculator {
 	    	btn.setForeground(c3);
 	    	btn.setFont(f1);
 	    	btn.setBorder(null);
+	    	btn.setFocusPainted(false);
 	    	btn.addActionListener(action2(textField, selOperator));
 		    frame.add(btn);
 		    y += 50;
@@ -121,11 +129,12 @@ public class Calculator {
 	    
 	    /* row - 1 */
 	    JButton b_0_0 = new JButton(layout[0][0]);
-	    b_0_0.setBounds(20, 90, 50, 50);
+	    b_0_0.setBounds(20, 115, 50, 50);
 	    b_0_0.setBackground(c1);
 	    b_0_0.setForeground(Color.white);
 	    b_0_0.setFont(f1);
 	    b_0_0.setBorder(null);
+	    b_0_0.setFocusPainted(false);
 	    b_0_0.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				textField.setText(null);
@@ -133,16 +142,22 @@ public class Calculator {
 				calcNum = 0;
 				result = 0;
 				proceedCalc = false;
+				hisCount = 0;
+				for(int i = 0; i < 5; i++)
+				{
+					a[i].setText("");
+				}
 			}
 		});
 	    frame.add(b_0_0);
 	    
 	    JButton b_0_1 = new JButton(layout[0][1]);
-	    b_0_1.setBounds(70, 90, 50, 50);
+	    b_0_1.setBounds(70, 115, 50, 50);
 	    b_0_1.setBackground(c1);
 	    b_0_1.setForeground(Color.white);
 	    b_0_1.setFont(f1);
 	    b_0_1.setBorder(null);
+	    b_0_1.setFocusPainted(false);
 	    b_0_1.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 				calculate(textField, "%");
@@ -157,11 +172,12 @@ public class Calculator {
 	    frame.add(b_0_1);
 	    
 	    JButton b_0_2 = new JButton(layout[0][2]);
-	    b_0_2.setBounds(120, 90, 50, 50);
+	    b_0_2.setBounds(120, 115, 50, 50);
 	    b_0_2.setBackground(c1);
 	    b_0_2.setForeground(c3);
 	    b_0_2.setFont(f1);
 	    b_0_2.setBorder(null);
+	    b_0_2.setFocusPainted(false);
 	    b_0_2.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
 				if(!textField.getText().equals("")) {
@@ -173,11 +189,12 @@ public class Calculator {
 	    
 	    /* row - 5 */
 	    JButton b_4_0 = new JButton(layout[4][0]);
-	    b_4_0.setBounds(20, 290, 50, 50);
+	    b_4_0.setBounds(20, 315, 50, 50);
 	    b_4_0.setBackground(c1);
 	    b_4_0.setForeground(Color.white);
 	    b_4_0.setFont(f1);
 	    b_4_0.setBorder(null);
+	    b_4_0.setFocusPainted(false);
 	    b_4_0.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!textField.getText().equals(""))
@@ -185,26 +202,29 @@ public class Calculator {
 					double x = Double.parseDouble(textField.getText());
 					x *= -1;
 					textField.setText(Double.toString(x));
+					proceedCalc = true;
 				}
 			}
 		});
 	    frame.add(b_4_0);
 	    
 	    JButton b_4_1 = new JButton(layout[4][1]);
-	    b_4_1.setBounds(70, 290, 50, 50);
+	    b_4_1.setBounds(70, 315, 50, 50);
 	    b_4_1.setBackground(c1);
 	    b_4_1.setForeground(Color.white);
 	    b_4_1.setFont(f1);
 	    b_4_1.setBorder(null);
+	    b_4_1.setFocusPainted(false);
 	    b_4_1.addActionListener(Calculator.action(textField));
 	    frame.add(b_4_1);
 	    
 	    JButton b_4_2 = new JButton(layout[4][2]);
-	    b_4_2.setBounds(120, 290, 50, 50);
+	    b_4_2.setBounds(120, 315, 50, 50);
 	    b_4_2.setBackground(c1);
 	    b_4_2.setForeground(Color.white);
 	    b_4_2.setFont(f1);
 	    b_4_2.setBorder(null);
+	    b_4_2.setFocusPainted(false);
 	    b_4_2.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
 				if(!textField.getText().contains("."))
@@ -214,11 +234,12 @@ public class Calculator {
 	    frame.add(b_4_2);
 	    
 	    JButton b_4_3 = new JButton(layout[4][3]);
-	    b_4_3.setBounds(170, 290, 50, 50);
+	    b_4_3.setBounds(170, 315, 50, 50);
 	    b_4_3.setBackground(c3);
 	    b_4_3.setForeground(Color.white);
 	    b_4_3.setFont(f1);
 	    b_4_3.setBorder(null);
+	    b_4_3.setFocusPainted(false);
 	    b_4_3.addActionListener(Calculator.action3(textField));
 	    frame.add(b_4_3);
 
@@ -302,21 +323,21 @@ public class Calculator {
 				calculate(input, operator);
 				addToHistory(" = " + result);
 				break;
-			case "/":
+			case "÷":
 				result /= Double.parseDouble(input.getText());
-				addToHistory("/" + calcNum);
+				addToHistory(op + calcNum);
 				break;
-			case "*":
+			case "×":
 				result *= Double.parseDouble(input.getText());
-				addToHistory("*" + calcNum);
+				addToHistory(op + calcNum);
 				break;
 			case "-":
 				result -= Double.parseDouble(input.getText());
-				addToHistory("-" + calcNum);
+				addToHistory(op + calcNum);
 				break;
 			case "+":
 				result += Double.parseDouble(input.getText());
-				addToHistory("+" + calcNum);
+				addToHistory(op + calcNum);
 				break;
 		}
 	}
