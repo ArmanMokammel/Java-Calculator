@@ -10,28 +10,71 @@ public class Calculator {
 	static double calcNum = 0;
 	static double result = 0;
 	static boolean proceedCalc = false;
+    static JLabel[] a = new JLabel[5];
+    static int hisCount = 0;
+    static boolean isChain = false;
+    static String operator;
 
 	public static void main(String[] args) {
 		
 		String[][] layout = {
-				{"C", 	"%", "Ans", "/"},
+				{"C", 	"%", "⌫", "/"},
 				{"7", 	"8", "9", 	"*"},
 				{"4", 	"5", "6", 	"-"},
 				{"1", 	"2", "3", 	"+"},
 				{"+/-", "0", ".", 	"="}
 		};
 		
+		String[] calcs = new String[5];
+		
 		Color c1 = new Color(38, 38, 38);
 		Color c2 = new Color(67, 67, 67);
-		Color c3 = new Color(255, 70, 70);
+		Color c3 = new Color(189, 126, 62);
 		
 		Font f1 = new Font(null, Font.BOLD, 20);
 		
 		JFrame frame = new JFrame("Calculator");
 		frame.setLayout(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
 	    frame.setSize(290,390);
 	    frame.getContentPane().setBackground(c1);
+	    
+	    JLabel history = new JLabel("History");
+	    history.setBounds(300, 100, 70, 20);
+	    history.setForeground(Color.white);
+	    history.setFont(f1);
+	    frame.add(history);
+	    
+	    int ay = 120;
+	    for(int i = 0 ; i < 5; i++) {
+	    	a[i] = new JLabel();
+	    	a[i].setBounds(250, ay, 170, 40);
+	    	a[i].setBackground(c1);
+	    	a[i].setForeground(Color.lightGray);
+	    	a[i].setBorder(null);
+	    	a[i].setVisible(false);
+	    	frame.add(a[i]);
+	    	ay += 40;
+	    }
+	    
+	    JButton b = new JButton("Show History");
+	    b.setBounds(0, 0, 100, 20);
+	    b.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent e) {
+				if(frame.getWidth() == 290) {
+					frame.setSize(490, 390);
+					for(int i = 0; i < 5; i++)
+						a[i].setVisible(true);
+				}
+				else {
+					frame.setSize(290, 390);
+					for(int i = 0; i < 5; i++)
+						a[i].setVisible(false);	
+				}
+			}
+		});
+	    frame.add(b);
 	    
 	    JTextField textField = new JTextField();
 	    textField.setBounds(20, 20, 200, 50);
@@ -102,11 +145,13 @@ public class Calculator {
 	    b_0_1.setBorder(null);
 	    b_0_1.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
-	    		result = calcNum;
-				calcNum = Double.parseDouble(textField.getText()) / 100;
-				calculate(selOperator);
+				calculate(textField, "%");
 				textField.setText(Double.toString(result));
 				calcNum = 0;
+				result = 0;
+				operator = "";
+				hisCount++;
+				proceedCalc = false;
 			}
 		});
 	    frame.add(b_0_1);
@@ -119,7 +164,9 @@ public class Calculator {
 	    b_0_2.setBorder(null);
 	    b_0_2.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent e) {
-				textField.setText(Double.toString(result));				
+				if(!textField.getText().equals("")) {
+					textField.setText(textField.getText().substring(0, textField.getText().length() - 1));			
+				}
 			}
 		});
 	    frame.add(b_0_2);
@@ -133,7 +180,7 @@ public class Calculator {
 	    b_4_0.setBorder(null);
 	    b_4_0.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(textField.getText() != null)
+				if(!textField.getText().equals(""))
 				{
 					double x = Double.parseDouble(textField.getText());
 					x *= -1;
@@ -172,7 +219,7 @@ public class Calculator {
 	    b_4_3.setForeground(Color.white);
 	    b_4_3.setFont(f1);
 	    b_4_3.setBorder(null);
-	    b_4_3.addActionListener(Calculator.action3(textField, selOperator));
+	    b_4_3.addActionListener(Calculator.action3(textField));
 	    frame.add(b_4_3);
 
 	    frame.setVisible(true);
@@ -182,7 +229,7 @@ public class Calculator {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JButton btn = (JButton)e.getSource();
-				if(txt.getText() != null && !proceedCalc && !txt.getText().equals(".")) {
+				if(!txt.getText().equals(null) && !proceedCalc && !txt.getText().equals(".")) {
 					txt.setText(null);
 				}
 				txt.setText(txt.getText() + btn.getText());
@@ -196,18 +243,20 @@ public class Calculator {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JButton btn = (JButton)e.getSource();
-				lbl.setText("(" + btn.getText() + ")");
-				
+				operator = btn.getText();
+				lbl.setText("(" + operator + ")");
+				if(hisCount > 4 || a[hisCount].getText().equals(""))
+					addToHistory(txt.getText());
+
 				if(proceedCalc) {					
-					if(calcNum != 0) {
-						result = calcNum;
+					if(result != 0) {
+						isChain = true;
 						calcNum = Double.parseDouble(txt.getText());
-						calculate(lbl);
+						calculate(txt, operator);
 						txt.setText(Double.toString(result));
-						calcNum = result;
 					}
 					else {
-						calcNum = Double.parseDouble(txt.getText());
+						result = Double.parseDouble(txt.getText());
 					}					
 					proceedCalc = false;					
 				}
@@ -215,37 +264,74 @@ public class Calculator {
 		};		
 	}
 	
-	public static ActionListener action3(JTextField txt, JLabel lbl) {
+	public static ActionListener action3(JTextField txt) {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(calcNum != 0) {
-					result = calcNum;
-				}
-				calcNum = Double.parseDouble(txt.getText());
-				calculate(lbl);
-				txt.setText(Double.toString(result));
-				calcNum = 0;
-				proceedCalc = false;
+				if(!txt.getText().equals(null)) {
+					if(isChain) {
+						calcNum = Double.parseDouble(txt.getText());
+					}
+					else {
+						if(calcNum != 0) {
+							result = calcNum;
+						}
+						else {
+							calcNum = Double.parseDouble(txt.getText());
+						}
+					}
+					calculate(txt, operator);
+					addToHistory(" = " + result);
+					txt.setText(Double.toString(result));
+					calcNum = 0;
+					result = 0;
+					operator = "";
+					proceedCalc = false;
+					isChain = false;
+					hisCount++;
+				}				
 			}
 		};		
 	}
 	
-	public static void calculate(JLabel lbl)
+	public static void calculate(JTextField input, String op)
 	{
-		String s = lbl.getText();
-		switch(s) {
-			case "(/)":
-				result /= calcNum;
+		switch(op) {
+			case "%":				
+				calcNum = Double.parseDouble(input.getText()) / 100;
+				input.setText(Double.toString(calcNum));
+				calculate(input, operator);
+				addToHistory(" = " + result);
 				break;
-			case "(*)":
-				result *= calcNum ;
+			case "/":
+				result /= Double.parseDouble(input.getText());
+				addToHistory("/" + calcNum);
 				break;
-			case "(-)":
-				result -= calcNum;
+			case "*":
+				result *= Double.parseDouble(input.getText());
+				addToHistory("*" + calcNum);
 				break;
-			case "(+)":
-				result += calcNum;
+			case "-":
+				result -= Double.parseDouble(input.getText());
+				addToHistory("-" + calcNum);
 				break;
+			case "+":
+				result += Double.parseDouble(input.getText());
+				addToHistory("+" + calcNum);
+				break;
+		}
+	}
+	
+	public static void addToHistory(String s) {
+		if(hisCount > 4) {
+			a[0].setText(a[1].getText());
+			a[1].setText(a[2].getText());
+			a[2].setText(a[3].getText());
+			a[3].setText(a[4].getText());
+			a[4].setText(s);
+			hisCount = 4;
+		}
+		else {
+			a[hisCount].setText(a[hisCount].getText() + s);
 		}
 	}
 }
