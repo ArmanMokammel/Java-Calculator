@@ -1,7 +1,9 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,7 +13,7 @@ public class Calculator {
 	
 	static double calcNum = 0;
 	static double result = 0;
-   	static int hisCount = 0;
+	static int hisCount = 0;
 	static boolean proceedCalc = false;
 	static boolean isChain = false;
 	static String operator;
@@ -41,6 +43,8 @@ public class Calculator {
 		frame.setResizable(false);
 	    frame.setSize(290,415);
 	    frame.getContentPane().setBackground(c1);
+	    Image img = Toolkit.getDefaultToolkit().getImage("C:\\Dvlp2\\NSU\\NSU-Java\\Arman\\src\\Calculator-Icon.png");
+	    frame.setIconImage(img);
 	    Point p = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
 	    p.x -= 145;
 	    p.y -= 205;
@@ -81,7 +85,7 @@ public class Calculator {
 	    b.setBounds(90, 80, 135, 30);
 	    b.setFont(new Font(null, Font.BOLD, 15));
 		b.setBackground(c1);
-		b.setForeground(Color.white);
+		b.setForeground(Color.lightGray);
 		b.setBorder(null);
 		b.setFocusPainted(false);
 	    b.addActionListener(new ActionListener() {			
