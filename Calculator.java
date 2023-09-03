@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -9,11 +11,12 @@ public class Calculator {
 	
 	static double calcNum = 0;
 	static double result = 0;
+   	static int hisCount = 0;
 	static boolean proceedCalc = false;
-    static JLabel[] a = new JLabel[5];
-    static int hisCount = 0;
-    static boolean isChain = false;
-    static String operator;
+	static boolean isChain = false;
+	static String operator;
+    
+    	static JLabel[] his = new JLabel[5];
 
 	public static void main(String[] args) {		
 		String[][] layout = {
@@ -23,9 +26,7 @@ public class Calculator {
 				{"1", 	"2", "3", 	"+"},
 				{"+/-", "0", ".", 	"="}
 		};
-		
-		String[] calcs = new String[5];
-		
+				
 		Color c1 = new Color(38, 38, 38);
 		Color c2 = new Color(67, 67, 67);
 		Color c3 = new Color(189, 126, 62);
@@ -40,6 +41,10 @@ public class Calculator {
 		frame.setResizable(false);
 	    frame.setSize(290,415);
 	    frame.getContentPane().setBackground(c1);
+	    Point p = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+	    p.x -= 145;
+	    p.y -= 205;
+	    frame.setLocation(p);
 	    
 	    JLabel history = new JLabel("History");
 	    history.setBounds(300, 100, 70, 20);
@@ -49,13 +54,13 @@ public class Calculator {
 	    
 	    int ay = 120;
 	    for(int i = 0 ; i < 5; i++) {
-	    	a[i] = new JLabel();
-	    	a[i].setBounds(250, ay, 170, 40);
-	    	a[i].setBackground(c1);
-	    	a[i].setForeground(Color.lightGray);
-	    	a[i].setBorder(null);
-	    	a[i].setVisible(false);
-	    	frame.add(a[i]);
+	    	his[i] = new JLabel();
+	    	his[i].setBounds(250, ay, 170, 40);
+	    	his[i].setBackground(c1);
+	    	his[i].setForeground(Color.lightGray);
+	    	his[i].setBorder(null);
+	    	his[i].setVisible(false);
+	    	frame.add(his[i]);
 	    	ay += 40;
 	    }
 	    
@@ -73,7 +78,7 @@ public class Calculator {
 	    frame.add(selOperator);
 	    
 	    JButton b = new JButton("Show History");
-	    b.setBounds(90, 90, 135, 20);
+	    b.setBounds(90, 80, 135, 30);
 	    b.setFont(new Font(null, Font.BOLD, 15));
 		b.setBackground(c1);
 		b.setForeground(Color.white);
@@ -84,12 +89,12 @@ public class Calculator {
 				if(frame.getWidth() == 290) {
 					frame.setSize(490, 415);
 					for(int i = 0; i < 5; i++)
-						a[i].setVisible(true);
+						his[i].setVisible(true);
 				}
 				else {
 					frame.setSize(290, 415);
 					for(int i = 0; i < 5; i++)
-						a[i].setVisible(false);	
+						his[i].setVisible(false);	
 				}
 			}
 		});
@@ -145,7 +150,7 @@ public class Calculator {
 				hisCount = 0;
 				for(int i = 0; i < 5; i++)
 				{
-					a[i].setText("");
+					his[i].setText("");
 				}
 			}
 		});
@@ -240,7 +245,7 @@ public class Calculator {
 	    b_4_3.setFont(f1);
 	    b_4_3.setBorder(null);
 	    b_4_3.setFocusPainted(false);
-	    b_4_3.addActionListener(Calculator.action3(textField));
+	    b_4_3.addActionListener(Calculator.action3(textField, selOperator));
 	    frame.add(b_4_3);
 
 	    frame.setVisible(true);
@@ -266,7 +271,7 @@ public class Calculator {
 				JButton btn = (JButton)e.getSource();
 				operator = btn.getText();
 				lbl.setText("(" + operator + ")");
-				if(hisCount > 4 || a[hisCount].getText().equals(""))
+				if(hisCount > 4 || his[hisCount].getText().equals(""))
 					addToHistory(txt.getText());
 
 				if(proceedCalc) {					
@@ -285,7 +290,7 @@ public class Calculator {
 		};		
 	}
 	
-	public static ActionListener action3(JTextField txt) {
+	public static ActionListener action3(JTextField txt, JLabel lbl) {
 		return new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!txt.getText().equals(null)) {
@@ -303,6 +308,7 @@ public class Calculator {
 					calculate(txt, operator);
 					addToHistory(" = " + result);
 					txt.setText(Double.toString(result));
+					lbl.setText("");
 					calcNum = 0;
 					result = 0;
 					operator = "";
@@ -344,15 +350,15 @@ public class Calculator {
 	
 	public static void addToHistory(String s) {
 		if(hisCount > 4) {
-			a[0].setText(a[1].getText());
-			a[1].setText(a[2].getText());
-			a[2].setText(a[3].getText());
-			a[3].setText(a[4].getText());
-			a[4].setText(s);
+			his[0].setText(his[1].getText());
+			his[1].setText(his[2].getText());
+			his[2].setText(his[3].getText());
+			his[3].setText(his[4].getText());
+			his[4].setText(s);
 			hisCount = 4;
 		}
 		else {
-			a[hisCount].setText(a[hisCount].getText() + s);
+			his[hisCount].setText(his[hisCount].getText() + s);
 		}
 	}
 }
