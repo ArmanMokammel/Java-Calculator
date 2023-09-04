@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class Calculator {
+public class Calculator_Old {
 	
 	static double calcNum = 0;
 	static double result = 0;
